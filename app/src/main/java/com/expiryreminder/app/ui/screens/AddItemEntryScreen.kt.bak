@@ -1,0 +1,953 @@
+package com.expiryreminder.app.ui.screens
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+data class MainCategory(
+    val id: Long,
+    val name: String,
+    val icon: ImageVector,
+    val iconColor: Color,
+    val bgColor: Color,
+    val description: String,
+    val subCategories: List<SubCategory>
+)
+
+data class SubCategory(
+    val id: Long,
+    val name: String,
+    val items: List<TemplateItem>
+)
+
+data class TemplateItem(
+    val id: Long,
+    val name: String,
+    val iconEmoji: String,
+    val description: String = ""
+)
+
+val mainCategoriesList = listOf(
+    MainCategory(
+        id = 1,
+        name = "食品厨房",
+        icon = Icons.Default.Restaurant,
+        iconColor = Color(0xFFFF9500),
+        bgColor = Color(0xFFFFF3E0),
+        description = "生鲜、零食、调料",
+        subCategories = listOf(
+            SubCategory(
+                id = 101,
+                name = "生鲜食品",
+                items = listOf(
+                    TemplateItem(1001, "牛奶", "🥛", "冷藏保质期7天"),
+                    TemplateItem(1002, "酸奶", "🥛", "冷藏保质期21天"),
+                    TemplateItem(1003, "肉类", "🥩", "冷藏3-5天"),
+                    TemplateItem(1004, "海鲜", "🦐", "冷藏1-2天"),
+                    TemplateItem(1005, "蔬菜", "🥬", "冷藏3-7天"),
+                    TemplateItem(1006, "水果", "🍎", "常温3-7天"),
+                    TemplateItem(1007, "鸡蛋", "🥚", "冷藏21天"),
+                    TemplateItem(1008, "豆腐", "🧈", "冷藏2-3天")
+                )
+            ),
+            SubCategory(
+                id = 102,
+                name = "加工食品",
+                items = listOf(
+                    TemplateItem(1101, "面包", "🍞", "室温3-5天"),
+                    TemplateItem(1102, "蛋糕", "🎂", "冷藏3-5天"),
+                    TemplateItem(1103, "饼干", "🍪", "常温1-3个月"),
+                    TemplateItem(1104, "零食", "🍿", "见包装日期"),
+                    TemplateItem(1105, "罐头", "🥫", "未开封1-2年"),
+                    TemplateItem(1106, "方便面", "🍜", "常温6个月"),
+                    TemplateItem(1107, "速冻食品", "❄️", "冷冻3-12个月"),
+                    TemplateItem(1108, "火腿肠", "🌭", "常温6个月")
+                )
+            ),
+            SubCategory(
+                id = 103,
+                name = "调味品",
+                items = listOf(
+                    TemplateItem(1201, "食用油", "🫒", "开封后3个月"),
+                    TemplateItem(1202, "盐", "🧂", "长期保存"),
+                    TemplateItem(1203, "酱油", "🫗", "开封后3-6个月"),
+                    TemplateItem(1204, "醋", "🫗", "开封后6-12个月"),
+                    TemplateItem(1205, "蚝油", "🦪", "开封后冷藏3-6个月"),
+                    TemplateItem(1206, "豆瓣酱", "🌶️", "开封后冷藏6个月"),
+                    TemplateItem(1207, "鸡精", "🐔", "开封后12-18个月"),
+                    TemplateItem(1208, "香料", "🌿", "干燥处1-2年")
+                )
+            ),
+            SubCategory(
+                id = 104,
+                name = "饮料酒水",
+                items = listOf(
+                    TemplateItem(1301, "果汁", "🧃", "开封后冷藏3-5天"),
+                    TemplateItem(1302, "碳酸饮料", "🥤", "未开封6-9个月"),
+                    TemplateItem(1303, "茶饮料", "🍵", "未开封12个月"),
+                    TemplateItem(1304, "咖啡", "☕", "未开封12个月"),
+                    TemplateItem(1305, "奶茶", "🧋", "冷藏24小时"),
+                    TemplateItem(1306, "啤酒", "🍺", "未开封6-12个月"),
+                    TemplateItem(1307, "红酒", "🍷", "开瓶后3-5天"),
+                    TemplateItem(1308, "白酒", "🍶", "长期保存")
+                )
+            ),
+            SubCategory(
+                id = 105,
+                name = "奶粉辅食",
+                items = listOf(
+                    TemplateItem(1401, "奶粉", "🍼", "开封后1个月"),
+                    TemplateItem(1402, "婴儿辅食", "👶", "见包装说明"),
+                    TemplateItem(1403, "孕妇营养品", "🤰", "见包装日期"),
+                    TemplateItem(1404, "运动补剂", "💪", "开封后6个月")
+                )
+            ),
+            SubCategory(
+                id = 106,
+                name = "特殊食品",
+                items = listOf(
+                    TemplateItem(1501, "保健品", "💊", "见包装日期"),
+                    TemplateItem(1502, "营养补充剂", "🥗", "见包装日期")
+                )
+            )
+        )
+    ),
+    MainCategory(
+        id = 2,
+        name = "个人护理",
+        icon = Icons.Default.Face,
+        iconColor = Color(0xFFFF4081),
+        bgColor = Color(0xFFFCE4EC),
+        description = "美妆、洗护、用品",
+        subCategories = listOf(
+            SubCategory(
+                id = 201,
+                name = "护肤品",
+                items = listOf(
+                    TemplateItem(2001, "面霜", "🧴", "开封后6-12个月"),
+                    TemplateItem(2002, "乳液", "🧴", "开封后6-12个月"),
+                    TemplateItem(2003, "精华液", "💧", "开封后6-12个月"),
+                    TemplateItem(2004, "爽肤水", "💦", "开封后6-12个月"),
+                    TemplateItem(2005, "眼霜", "👁️", "开封后6个月"),
+                    TemplateItem(2006, "面膜", "😷", "开封后立即使用"),
+                    TemplateItem(2007, "防晒霜", "☀️", "开封后12个月"),
+                    TemplateItem(2008, "卸妆油", "🫧", "开封后12个月")
+                )
+            ),
+            SubCategory(
+                id = 202,
+                name = "化妆品",
+                items = listOf(
+                    TemplateItem(2101, "口红", "💄", "开封后18-24个月"),
+                    TemplateItem(2102, "粉底液", "🎨", "开封后12-18个月"),
+                    TemplateItem(2103, "眼影", "👁️", "开封后24-36个月"),
+                    TemplateItem(2104, "睫毛膏", "👁️", "⚠️ 开封后仅3-6个月"),
+                    TemplateItem(2105, "眼线笔", "✏️", "⚠️ 开封后仅3-6个月"),
+                    TemplateItem(2106, "腮红", "😊", "开封后18-24个月"),
+                    TemplateItem(2107, "眉笔", "✏️", "开封后24-36个月"),
+                    TemplateItem(2108, "指甲油", "💅", "开封后12-18个月")
+                )
+            ),
+            SubCategory(
+                id = 203,
+                name = "洗护用品",
+                items = listOf(
+                    TemplateItem(2201, "洗发水", "🧴", "开封后12-18个月"),
+                    TemplateItem(2202, "护发素", "🧴", "开封后12-18个月"),
+                    TemplateItem(2203, "沐浴露", "🧴", "开封后12-18个月"),
+                    TemplateItem(2204, "洗手液", "🧼", "开封后12个月"),
+                    TemplateItem(2205, "牙膏", "🦷", "开封后12个月"),
+                    TemplateItem(2206, "香皂", "🧼", "开封后12-18个月"),
+                    TemplateItem(2207, "身体乳", "🧴", "开封后12-18个月"),
+                    TemplateItem(2208, "剃须刀刀片", "🪒", "使用1-3个月更换")
+                )
+            ),
+            SubCategory(
+                id = 204,
+                name = "口腔护理",
+                items = listOf(
+                    TemplateItem(2301, "牙刷", "🪥", "⚠️ 每3个月更换"),
+                    TemplateItem(2302, "牙线", "🧵", "长期保存"),
+                    TemplateItem(2303, "漱口水", "🫧", "开封后6-12个月"),
+                    TemplateItem(2304, "牙套清洁片", "🦷", "见包装日期")
+                )
+            ),
+            SubCategory(
+                id = 205,
+                name = "隐形眼镜",
+                items = listOf(
+                    TemplateItem(2401, "日抛隐形眼镜", "👁️", "当日使用"),
+                    TemplateItem(2402, "周抛隐形眼镜", "👁️", "使用1周"),
+                    TemplateItem(2403, "月抛隐形眼镜", "👁️", "使用1个月"),
+                    TemplateItem(2404, "年抛隐形眼镜", "👁️", "使用1年"),
+                    TemplateItem(2405, "护理液", "💧", "开封后3个月")
+                )
+            ),
+            SubCategory(
+                id = 206,
+                name = "其他用品",
+                items = listOf(
+                    TemplateItem(2501, "毛巾", "🧺", "⚠️ 每3个月更换"),
+                    TemplateItem(2502, "梳子", "🪮", "长期使用"),
+                    TemplateItem(2503, "镜子", "🪞", "长期使用")
+                )
+            )
+        )
+    ),
+    MainCategory(
+        id = 3,
+        name = "健康医疗",
+        icon = Icons.Default.LocalHospital,
+        iconColor = Color(0xFFE91E63),
+        bgColor = Color(0xFFFCE4EC),
+        description = "药品、保健、医疗",
+        subCategories = listOf(
+            SubCategory(
+                id = 301,
+                name = "药品类",
+                items = listOf(
+                    TemplateItem(3001, "处方药", "💊", "按医嘱使用"),
+                    TemplateItem(3002, "感冒药", "💊", "开封后2-3年"),
+                    TemplateItem(3003, "退烧药", "💊", "开封后3-5年"),
+                    TemplateItem(3004, "消炎药", "💊", "开封后2-3年"),
+                    TemplateItem(3005, "止痛药", "💊", "开封后3-5年"),
+                    TemplateItem(3006, "外用药", "🩹", "开封后1-2年"),
+                    TemplateItem(3007, "抗生素", "💊", "按疗程使用"),
+                    TemplateItem(3008, "维生素", "💊", "开封后2年")
+                )
+            ),
+            SubCategory(
+                id = 302,
+                name = "保健品",
+                items = listOf(
+                    TemplateItem(3101, "维生素片", "💊", "开封后1-2年"),
+                    TemplateItem(3102, "钙片", "💊", "开封后2年"),
+                    TemplateItem(3103, "鱼油", "🐟", "开封后1-2年"),
+                    TemplateItem(3104, "蛋白粉", "🥛", "开封后6个月"),
+                    TemplateItem(3105, "益生菌", "🦠", "开封后6-12个月"),
+                    TemplateItem(3106, "阿胶", "🟤", "长期保存"),
+                    TemplateItem(3107, "胶原蛋白", "✨", "开封后1-2年"),
+                    TemplateItem(3108, "叶酸", "🌿", "开封后2年")
+                )
+            ),
+            SubCategory(
+                id = 303,
+                name = "医疗用品",
+                items = listOf(
+                    TemplateItem(3201, "创可贴", "🩹", "⚠️ 定期检查有效期"),
+                    TemplateItem(3202, "消毒水", "🧪", "开封后1-2年"),
+                    TemplateItem(3203, "酒精棉片", "🧻", "密封保存1年"),
+                    TemplateItem(3204, "口罩", "😷", "⚠️ 有效期2-3年"),
+                    TemplateItem(3205, "一次性手套", "🧤", "密封保存"),
+                    TemplateItem(3206, "体温计", "🌡️", "定期校准"),
+                    TemplateItem(3207, "血压计", "🩺", "定期检查电池"),
+                    TemplateItem(3208, "血糖仪", "🩸", "试纸有有效期")
+                )
+            ),
+            SubCategory(
+                id = 304,
+                name="医疗服务",
+                items = listOf(
+                    TemplateItem(3301, "疫苗接种", "💉", "按时接种"),
+                    TemplateItem(3302, "体检报告", "📋", "通常1年内有效"),
+                    TemplateItem(3303, "牙医预约", "🦷", "每半年1次"),
+                    TemplateItem(3304, "验光配镜", "👓", "每1-2年"),
+                    TemplateItem(3305, "医保卡", "💳", "注意有效期")
+                )
+            )
+        )
+    ),
+    MainCategory(
+        id = 4,
+        name = "证件文件",
+        icon = Icons.Default.Badge,
+        iconColor = Color(0xFF9C27B0),
+        bgColor = Color(0xFFF3E5F5),
+        description = "证件、合同、证书",
+        subCategories = listOf(
+            SubCategory(
+                id = 401,
+                name = "个人证件",
+                items = listOf(
+                    TemplateItem(4001, "身份证", "🆔", "⚠️ 提前90天换证"),
+                    TemplateItem(4002, "护照", "🛂", "⚠️ 提前6个月续签"),
+                    TemplateItem(4003, "港澳通行证", "🇭🇰", "⚠️ 提前6个月续签"),
+                    TemplateItem(4004, "台湾通行证", "🇹🇼", "⚠️ 提前6个月续签"),
+                    TemplateItem(4005, "驾驶证", "🚗", "⚠️ 提前90天换证"),
+                    TemplateItem(4006, "行驶证", "🚙", "随车辆年检"),
+                    TemplateItem(4007, "居住证", "🏠", "⚠️ 提前30天续签"),
+                    TemplateItem(4008, "健康证", "🏥", "⚠️ 提前30天办理")
+                )
+            ),
+            SubCategory(
+                id = 402,
+                name = "其他证件",
+                items = listOf(
+                    TemplateItem(4101, "结婚证", "💍", "长期有效"),
+                    TemplateItem(4102, "离婚证",📄, "长期有效"),
+                    TemplateItem(4103, "学历证书", "🎓", "长期有效"),
+                    TemplateItem(4104, "职业资格证书", "📜", "定期复审"),
+                    TemplateItem(4105, "出生证明", "👶", "长期有效"),
+                    TemplateItem(4106, "社保卡", "💳", "注意有效期")
+                )
+            ),
+            SubCategory(
+                id = 403,
+                name = "法律文件",
+                items = listOf(
+                    TemplateItem(4201, "租房合同", "🏠", "到期前1-2个月续约"),
+                    TemplateItem(4202, "购房合同", "🏘️", "长期保存"),
+                    TemplateItem(4203, "贷款合同", "📝", "关注还款日"),
+                    TemplateItem(4204, "劳动合同", "💼", "到期前1-3个月续签"),
+                    TemplateItem(4205, "保密协议", "🔒", "按合同期限")
+                )
+            ),
+            SubCategory(
+                id = 404,
+                name = "企业证件",
+                items = listOf(
+                    TemplateItem(4301, "营业执照", "🏢", "定期年检"),
+                    TemplateItem(4302, "税务登记证", "📊", "定期年检"),
+                    TemplateItem(4303, "经营许可证", "📋", "注意有效期"),
+                    TemplateItem(4304, "商标注册证", "®️", "10年有效期")
+                )
+            )
+        )
+    ),
+    MainCategory(
+        id = 5,
+        name = "金融保险",
+        icon = Icons.Default.AccountBalance,
+        iconColor = Color(0xFF4CAF50),
+        bgColor = Color(0xFFE8F5E9),
+        description = "还款、保险、理财",
+        subCategories = listOf(
+            SubCategory(
+                id = 501,
+                name = "信用卡贷款",
+                items = listOf(
+                    TemplateItem(5001, "信用卡还款日", "💳", "⚠️ 提前3天提醒"),
+                    TemplateItem(5002, "账单日", "📅", "每月固定日期"),
+                    TemplateItem(5003, "信用卡有效期", "💳", "⚠️ 提前30天确认新卡"),
+                    TemplateItem(5004, "房贷还款日", "🏠", "每月固定日期"),
+                    TemplateItem(5005, "车贷还款日", "🚗", "每月固定日期"),
+                    TemplateItem(5006, "消费贷款还款日", "💰", "每月固定日期")
+                )
+            ),
+            SubCategory(
+                id = 502,
+                name = "保险类",
+                items = listOf(
+                    TemplateItem(5101, "车险续费", "🚗", "⚠️ 提前30天提醒"),
+                    TemplateItem(5102, "寿险续费", "👨‍👩‍👧‍👦", "每年缴费"),
+                    TemplateItem(5103, "医疗险续费", "🏥", "每年缴费"),
+                    TemplateItem(5104, "意外险续费", "🛡️", "每年缴费"),
+                    TemplateItem(5105, "重疾险续费", "❤️", "每年缴费"),
+                    TemplateItem(5106, "宠物保险续费", "🐾", "每年缴费")
+                )
+            ),
+            SubCategory(
+                id = 503,
+                name = "理财类",
+                items = listOf(
+                    TemplateItem(5201, "定期存款", "🏦", "到期日前提醒"),
+                    TemplateItem(5202, "理财产品", "📈", "⚠️ 提前7天提醒"),
+                    TemplateItem(5203, "基金", "💹", "关注赎回日期"),
+                    TemplateItem(5204, "国债", "📊", "到期提醒")
+                )
+            ),
+            SubCategory(
+                id = 504,
+                name = "生活缴费",
+                items = listOf(
+                    TemplateItem(5301, "水电燃气费", "⚡", "每月缴费"),
+                    TemplateItem(5302, "物业费", "🏢", "每季度/年度"),
+                    TemplateItem(5303, "电话费", "📱", "每月缴费"),
+                    TemplateItem(5304, "宽带费", "🌐", "每月/年度缴费"),
+                    TemplateItem(5305, "有线电视费", "📺", "每月缴费")
+                )
+            )
+        )
+    ),
+    MainCategory(
+        id = 6,
+        name = "会员订阅",
+        icon = Icons.Default.CardMembership,
+        iconColor = Color(0xFFFF5722),
+        bgColor = Color(0xFFFFEBEE),
+        description = "会员、订阅、服务",
+        subCategories = listOf(
+            SubCategory(
+                id = 601,
+                name = "娱乐会员",
+                items = listOf(
+                    TemplateItem(6001, "腾讯视频会员", "📺", "⚠️ 自动续费提醒"),
+                    TemplateItem(6002, "爱奇艺会员", "🎬", "⚠️ 自动续费提醒"),
+                    TemplateItem(6003, "优酷会员", "📽️", "⚠️ 自动续费提醒"),
+                    TemplateItem(6004, "QQ音乐会员", "🎵", "⚠️ 自动续费提醒"),
+                    TemplateItem(6005, "网易云音乐会员", "🎶", "⚠️ 自动续费提醒"),
+                    TemplateItem(6006, "游戏会员", "🎮", "⚠️ 自动续费提醒")
+                )
+            ),
+            SubCategory(
+                id = 602,
+                name = "云服务",
+                items = listOf(
+                    TemplateItem(6101, "百度网盘", "☁️", "⚠️ 自动续费提醒"),
+                    TemplateItem(6102, "阿里云盘", "☁️", "⚠️ 自动续费提醒"),
+                    TemplateItem(6103, "iCloud", "☁️", "⚠️ 自动续费提醒"),
+                    TemplateItem(6104, "OneDrive", "☁️", "⚠️ 自动续费提醒")
+                )
+            ),
+            SubCategory(
+                id = 603,
+                name = "软件订阅",
+                items = listOf(
+                    TemplateItem(6201, "Office 365", "📝", "⚠️ 年度续费"),
+                    TemplateItem(6202, "Adobe全家桶", "🎨", "⚠️ 月度/年度续费"),
+                    TemplateItem(6203, "设计软件", "🖥️", "⚠️ 续费提醒"),
+                    TemplateItem(6204, "效率工具", "⚡", "⚠️ 续费提醒")
+                )
+            ),
+            SubCategory(
+                id = 604,
+                name = "线下会员",
+                items = listOf(
+                    TemplateItem(6301, "健身房会员", "💪", "到期提醒"),
+                    TemplateItem(6302, "瑜伽馆会员", "🧘", "到期提醒"),
+                    TemplateItem(6303, "美容院卡", "💆", "次数/时间到期"),
+                    TemplateItem(6304, "洗车卡", "🚗", "次数/时间到期"),
+                    TemplateItem(6305, "理发卡", "✂️", "次数/时间到期"),
+                    TemplateItem(6306, "餐饮会员卡", "🍽️", "余额/时间到期")
+                )
+            )
+        )
+    ),
+    MainCategory(
+        id = 7,
+        name = "数码设备",
+        icon = Icons.Default.Devices,
+        iconColor = Color(0xFF00BCD4),
+        bgColor = Color(0xFFE0F7FA),
+        description = "数码、耗材、保修",
+        subCategories = listOf(
+            SubCategory(
+                id = 701,
+                name = "保修期",
+                items = listOf(
+                    TemplateItem(7001, "手机保修", "📱", "通常1-2年"),
+                    TemplateItem(7002, "电脑保修", "💻", "通常1-3年"),
+                    TemplateItem(7003, "平板保修", "📱", "通常1-2年"),
+                    TemplateItem(7004, "电视保修", "📺", "通常1-3年"),
+                    TemplateItem(7005, "冰箱保修", "🧊", "通常1-3年"),
+                    TemplateItem(7006, "洗衣机保修", "🌀", "通常1-3年"),
+                    TemplateItem(7007, "空调保修", "❄️", "通常1-3年")
+                )
+            ),
+            SubCategory(
+                id = 702,
+                name = "更换周期",
+                items = listOf(
+                    TemplateItem(7101, "手机电池", "🔋", "⚠️ 2-3年寿命"),
+                    TemplateItem(7102, "笔记本电池", "🔋", "⚠️ 2-3年寿命"),
+                    TemplateItem(7103, "遥控器电池", "🔋", "⚠️ 每年更换"),
+                    TemplateItem(7104, "充电宝", "🔋", "⚠️ 2-3年寿命")
+                )
+            ),
+            SubCategory(
+                id = 703,
+                name = "耗材类",
+                items = listOf(
+                    TemplateItem(7201, "打印机墨盒", "🖨️", "使用量相关"),
+                    TemplateItem(7202, "硒鼓", "🖨️", "使用量相关"),
+                    TemplateItem(7203, "投影仪灯泡", "💡", "⚠️ 使用2000-5000小时"),
+                    TemplateItem(7204, "相机电池", "📷", "充放电300-500次"),
+                    TemplateItem(7205, "存储卡", "💾", "长期使用")
+                )
+            ),
+            SubCategory(
+                id = 704,
+                name = "网络服务",
+                items = listOf(
+                    TemplateItem(7301, "路由器更换", "📡", "3-5年更换"),
+                    TemplateItem(7302, "硬盘备份周期", "💾", "定期备份"),
+                    TemplateItem(7303, "域名到期日", "🌐", "⚠️ 提前30天续费"),
+                    TemplateItem(7304, "服务器续费", "🖥️", "⚠️ 提前7天续费")
+                )
+            )
+        )
+    ),
+    MainCategory(
+        id = 8,
+        name = "家居维护",
+        icon = Icons.Default.Home,
+        iconColor = Color(0xFF795548),
+        bgColor = Color(0xFFFBE9E7),
+        description = "滤芯、清洗、安全",
+        subCategories = listOf(
+            SubCategory(
+                id = 801,
+                name = "滤芯滤网",
+                items = listOf(
+                    TemplateItem(8001, "净水器PP棉滤芯", "💧", "⚠️ 3-6个月更换"),
+                    TemplateItem(8002, "净水器RO膜", "💧", "⚠️ 1-2年更换"),
+                    TemplateItem(8003, "空气净化器滤网", "🌬️", "⚠️ 3-12个月更换"),
+                    TemplateItem(8004, "空调滤网", "❄️", "⚠️ 每季度清洗"),
+                    TemplateItem(8005, "加湿器滤网", "💨", "⚠️ 1-3个月更换"),
+                    TemplateItem(8006, "吸尘器滤网", "🧹", "⚠️ 3-6个月更换")
+                )
+            ),
+            SubCategory(
+                id = 802,
+                name = "家电维护",
+                items = listOf(
+                    TemplateItem(8101, "热水器镁棒", "🔥", "⚠️ 2-3年更换"),
+                    TemplateItem(8102, "燃气灶电池", "🔥", "⚠️ 每年更换"),
+                    TemplateItem(8103, "油烟机清洗", "🍳", "⚠️ 每半年深度清洗"),
+                    TemplateItem(8104, "洗衣机清洗", "🌀", "⚠️ 每半年内筒清洗"),
+                    TemplateItem(8105, "冰箱除霜", "🧊", "⚠️ 定期除霜"),
+                    TemplateItem(8106, "空调深度清洗", "❄️", "⚠️ 每年1次")
+                )
+            ),
+            SubCategory(
+                id = 803,
+                name = "安全用品",
+                items = listOf(
+                    TemplateItem(8201, "干粉灭火器", "🧯", "⚠️ 有效期5年，提前30天提醒"),
+                    TemplateItem(8202, "烟雾报警器电池", "🔔", "⚠️ 每年更换"),
+                    TemplateItem(8203, "燃气报警器电池", "🔔", "⚠️ 每年更换"),
+                    TemplateItem(8204, "急救包药品", "🏥", "⚠️ 提前30天检查")
+                )
+            ),
+            SubCategory(
+                id = 804,
+                name = "家居清洁",
+                items = listOf(
+                    TemplateItem(8301, "窗帘清洗", "🪟", "每半年1次"),
+                    TemplateItem(8302, "地毯清洗", "🧹", "每季度1次"),
+                    TemplateItem(8303, "沙发清洗", "🛋️", "每季度1次"),
+                    TemplateItem(8304, "水管检查", "🔧", "每年1次"),
+                    TemplateItem(8305, "电路检查", "⚡", "每年1次")
+                )
+            )
+        )
+    ),
+    MainCategory(
+        id = 9,
+        name = "宠物用品",
+        icon = Icons.Default.Pets,
+        iconColor = Color(0xFF8BC34A),
+        bgColor = Color(0xFFF1F8E9),
+        description = "食品、用品、医疗",
+        subCategories = listOf(
+            SubCategory(
+                id = 901,
+                name = "宠物食品",
+                items = listOf(
+                    TemplateItem(9001, "狗粮", "🐕", "开封后1-2个月"),
+                    TemplateItem(9002, "猫粮", "🐱", "开封后1-2个月"),
+                    TemplateItem(9003, "宠物零食", "🦴", "见包装日期"),
+                    TemplateItem(9004, "宠物罐头", "🥫", "开封后冷藏1-2天"),
+                    TemplateItem(9005, "宠物奶粉", "🍼", "开封后1个月")
+                )
+            ),
+            SubCategory(
+                id = 902,
+                name = "宠物用品",
+                items = listOf(
+                    TemplateItem(9101, "猫砂", "🐱", "定期更换"),
+                    TemplateItem(9102, "狗尿垫", "🐕", "每日更换"),
+                    TemplateItem(9103, "宠物沐浴露", "🧴", "开封后12个月"),
+                    TemplateItem(9104, "宠物玩具", "🎾", "定期检查"),
+                    TemplateItem(9105, "牵引绳", "🦮", "定期检查磨损"),
+                    TemplateItem(9106, "宠物笼/窝", "🏠", "定期清洗消毒")
+                )
+            ),
+            SubCategory(
+                id = 903,
+                name = "医疗保健",
+                items = listOf(
+                    TemplateItem(9201, "疫苗接种", "💉", "按兽医建议"),
+                    TemplateItem(9202, "体内外驱虫", "💊", "每月/每季"),
+                    TemplateItem(9203, "宠物体检", "🏥", "每年1次"),
+                    TemplateItem(9204, "绝育手术预约", "🏥", "适龄时安排"),
+                    TemplateItem(9205, "宠物保险续费", "🐾", "每年缴费")
+                )
+            ),
+            SubCategory(
+                id = 904,
+                name = "其他服务",
+                items = listOf(
+                    TemplateItem(9301, "宠物寄养预约", "🏨", "出行前安排"),
+                    TemplateItem(9302, "宠物美容预约", "✂️", "每月/每季"),
+                    TemplateItem(9303, "宠物训练课程", "🎓", "按课程安排")
+                )
+            )
+        )
+    ),
+    MainCategory(
+        id = 10,
+        name = "出行旅游",
+        icon = Icons.Default.Flight,
+        iconColor = Color(0xFF673AB7),
+        bgColor = Color(0xFFEDE7F6),
+        description = "票务、住宿、签证",
+        subCategories = listOf(
+            SubCategory(
+                id = 1001,
+                name = "交通票务",
+                items = listOf(
+                    TemplateItem(10001, "机票", "✈️", "提前值机/改签截止"),
+                    TemplateItem(10002, "火车票", "🚄", "提前取票/改签截止"),
+                    TemplateItem(10003, "汽车票", "🚌", "发车前取票"),
+                    TemplateItem(10004, "船票", "⛴️", "提前登船"),
+                    TemplateItem(10005, "高铁票", "🚅", "改签/退票截止日")
+                )
+            ),
+            SubCategory(
+                id = 1002,
+                name = "住宿预订",
+                items = listOf(
+                    TemplateItem(10101, "酒店入住", "🏨", "入住/退房日期"),
+                    TemplateItem(10102, "民宿预订", "🏠", "入住/退房日期"),
+                    TemplateItem(10103, "取消政策截止日", "📅", "免费取消截止")
+                )
+            ),
+            SubCategory(
+                id = 1003,
+                name = "证件签证",
+                items = listOf(
+                    TemplateItem(10201, "签证有效期", "🛂", "⚠️ 注意停留期"),
+                    TemplateItem(10202, "护照有效期", "🛂", "⚠️ 至少6个月以上"),
+                    TemplateItem(10203, "国际驾照", "🚗", "按目的地要求")
+                )
+            ),
+            SubCategory(
+                id = 1004,
+                name = "其他",
+                items = listOf(
+                    TemplateItem(10301, "旅游保险", "🛡️", "行程期间有效"),
+                    TemplateItem(10302, "景点门票", "🎫", "使用日期"),
+                    TemplateItem(10303, "租车合同", "🚗", "还车日期")
+                )
+            )
+        )
+    ),
+    MainCategory(
+        id = 11,
+        name = "工作学习",
+        icon = Icons.Default.Work,
+        iconColor = Color(0xFF607D8B),
+        bgColor = Color(0xFFEFEBE9),
+        description = "工作、学习、考试",
+        subCategories = listOf(
+            SubCategory(
+                id = 1101,
+                name = "工作事项",
+                items = listOf(
+                    TemplateItem(11001, "合同到期日", "📝", "⚠️ 提前1-3个月续签"),
+                    TemplateItem(11002, "项目截止日期", "📅", "按时完成"),
+                    TemplateItem(11003, "发票报销截止日", "🧾", "当月/当季度"),
+                    TemplateItem(11004, "年假到期日", "🏖️", "年底前使用"),
+                    TemplateItem(11005, "培训截止日", "📚", "完成课程")
+                )
+            ),
+            SubCategory(
+                id = 1102,
+                name = "学习事项",
+                items = listOf(
+                    TemplateItem(11101, "考试报名时间", "📝", "关注报名截止"),
+                    TemplateItem(11102, "考试日期", "📅", "准时参加"),
+                    TemplateItem(11103, "课程截止日期", "📚", "按时完成"),
+                    TemplateItem(11104, "论文截止日期", "📄", "按时提交"),
+                    TemplateItem(11105, "图书馆借书", "📚", "归还日期")
+                )
+            ),
+            SubCategory(
+                id = 1103,
+                name = "其他事项",
+                items = listOf(
+                    TemplateItem(11201, "会议时间", "🗓️", "准时参加"),
+                    TemplateItem(11202, "个税专项扣除确认", "💰", "⚠️ 每年12月确认"),
+                    TemplateItem(11203, "报销截止日", "💳", "及时提交")
+                )
+            )
+        )
+    ),
+    MainCategory(
+        id = 12,
+        name = "其他事项",
+        icon = Icons.Default.Category,
+        iconColor = Color(0xFF86909C),
+        bgColor = Color(0xFFEEEEEE),
+        description = "积分、卡券、生活",
+        subCategories = listOf(
+            SubCategory(
+                id = 1201,
+                name = "积分类",
+                items = listOf(
+                    TemplateItem(12001, "超市积分", "🏪", "⚠️ 提前3天提醒"),
+                    TemplateItem(12002, "信用卡积分", "💳", "⚠️ 提前3天提醒"),
+                    TemplateItem(12003, "航空公司里程", "✈️", "⚠️ 注意有效期"),
+                    TemplateItem(12004, "酒店积分", "🏨", "⚠️ 注意有效期"),
+                    TemplateItem(12005, "APP积分", "📱", "⚠️ 提前3天提醒")
+                )
+            ),
+            SubCategory(
+                id = 1202,
+                name = "卡券类",
+                items = listOf(
+                    TemplateItem(12101, "电商优惠券", "🎫", "⚠️ 提前3天使用"),
+                    TemplateItem(12102, "实体店代金券", "💵", "⚠️ 注意有效期"),
+                    TemplateItem(12103, "红包", "🧧", "⚠️ 通常24小时"),
+                    TemplateItem(12104, "礼品卡", "🎁", "⚠️ 注意有效期"),
+                    TemplateItem(12105, "购物卡", "💳", "⚠️ 注意有效期"),
+                    TemplateItem(12106, "加油卡", "⛽", "余额/有效期")
+                )
+            ),
+            SubCategory(
+                id = 1203,
+                name = "生活类",
+                items = listOf(
+                    TemplateItem(12201, "鲜花保鲜期", "🌹", "3-7天"),
+                    TemplateItem(12202, "礼物赠送截止日", "🎁", "节日前"),
+                    TemplateItem(12203, "快递取件截止日", "📦", "通常3-5天"),
+                    TemplateItem(12204, "干洗店取衣日", "👔", "通常3-7天")
+                )
+            ),
+            SubCategory(
+                id = 1204,
+                name = "特殊类",
+                items = listOf(
+                    TemplateItem(12301, "车牌年检", "🚗", "⚠️ 提前30天"),
+                    TemplateItem(12302, "车辆保养", "🔧", "每5000-10000公里"),
+                    TemplateItem(12303, "驾照换证", "🚗", "⚠️ 提前90天"),
+                    TemplateItem(12304, "身份证换证", "🆔", "⚠️ 提前90天"),
+                    TemplateItem(12305, "居住证续签", "🏠", "⚠️ 提前30天")
+                )
+            )
+        )
+    )
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddItemEntryScreen(
+    categories: List<Any> = emptyList(),
+    onNavigateBack: () -> Unit,
+    onNavigateToCategory: (Long) -> Unit,
+    onNavigateToCustom: () -> Unit,
+    onQuickAdd: (String) -> Unit
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        "添加提醒",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.Default.Close, contentDescription = "关闭")
+                    }
+                }
+            )
+        },
+        containerColor = Color.White
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(horizontal = 16.dp)
+        ) {
+            SearchBar(
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text("搜索物品/事项，如：牛奶、身份证、车险", color = Color(0xFFBDBDBD), fontSize = 14.sp) },
+                query = "",
+                onQueryChange = {},
+                onSearch = {},
+                active = false,
+                onActiveChange = {},
+                leadingIcon = {
+                    Icon(Icons.Default.Search, contentDescription = null, tint = Color(0xFF86909C))
+                },
+                shape = RoundedCornerShape(24.dp),
+                colors = SearchBarDefaults.colors(
+                    containerColor = Color(0xFFF5F5F5)
+                )
+            ) {}
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                "常用快捷添加",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF333333)
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            val quickCategories = listOf(
+                Triple("牛奶", "🥛", Color(0xFF4FC3F7)),
+                Triple("药品", "💊", Color(0xFFFF6B6B)),
+                Triple("身份证", "🆔", Color(0xFF4ECDC4)),
+                Triple("车险", "🚗", Color(0xFF45B7D1)),
+                Triple("会员", "⭐", Color(0xFFFFA726)),
+                Triple("护肤品", "🧴", Color(0xFFE056FD)),
+                Triple("牙刷", "🪥", Color(0xFF26C6DA)),
+                Triple("灭火器", "🧯", Color(0xFFEF5350)),
+                Triple("会员", "🎫", Color(0xFFAB47BC)),
+                Triple("更多", "⋯", Color(0xFF95A5A6))
+            )
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(5),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.height(160.dp)
+            ) {
+                items(quickCategories) { (name, emoji, color) ->
+                    Column(
+                        modifier = Modifier
+                            .clickable { if (name != "更多") onQuickAdd(name) },
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(color.copy(alpha = 0.15f))
+                                .padding(10.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(emoji, fontSize = 24.sp)
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(name, fontSize = 11.sp, color = Color(0xFF333333), fontWeight = FontWeight.Medium)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                "选择分类",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF333333)
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(mainCategoriesList) { category ->
+                    CategoryGridItemNew(
+                        category = category,
+                        onClick = { onNavigateToCategory(category.id) }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFFF8F9FA))
+                    .clickable { onNavigateToCustom() }
+                    .padding(vertical = 14.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = null, tint = Color(0xFF5FCF80), modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("自定义物品/事项", fontSize = 14.sp, color = Color(0xFF5FCF80), fontWeight = FontWeight.Medium)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+        }
+    }
+}
+
+@Composable
+fun CategoryGridItemNew(
+    category: MainCategory,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = category.bgColor),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                category.icon,
+                contentDescription = null,
+                tint = category.iconColor,
+                modifier = Modifier.size(24.dp)
+            )
+            
+            Spacer(modifier = Modifier.width(10.dp))
+            
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = category.name,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF333333),
+                    maxLines = 1
+                )
+                Text(
+                    text = category.description,
+                    fontSize = 11.sp,
+                    color = Color(0xFF86909C),
+                    maxLines = 1
+                )
+            }
+            
+            Icon(
+                Icons.Default.ChevronRight,
+                contentDescription = null,
+                tint = Color(0xFFC7C7CC),
+                modifier = Modifier.size(20.dp)
+            )
+        }
+    }
+}
